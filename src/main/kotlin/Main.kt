@@ -161,5 +161,90 @@ class Cadena {
 }
 
 fun main() {
+    val listaProductos = mutableListOf<Producto>()
+    listaProductos.add(Producto(1, "Computadora", 130.6))
+    listaProductos.add(Producto(3, "Pelota", 34.7))
+    listaProductos.add(Producto(7, "Plato", 13.2))
+    listaProductos.add(Producto(16, "Monopatin", 100.toDouble()))
 
+    val diasHabiles = listOf("Lunes", "Martes", "Miercoles", "Jueves", "Viernes")
+
+    val supermercadoCarrefour = Supermercado(3, "Carrefour", listaProductos, 10, LocalTime.of(8, 0), LocalTime.of(20, 0), diasHabiles)
+    val supermercadoDia = Supermercado(5, "Dia", listaProductos, 5, LocalTime.of(8, 30), LocalTime.of(20, 30), diasHabiles)
+
+    supermercadoCarrefour.registrarVenta(3, 4)
+    supermercadoCarrefour.registrarVenta(7, 5)
+    supermercadoDia.registrarVenta(16, 2)
+    supermercadoDia.registrarVenta(16, 3)
+
+    val supermercadosArgentinos = Cadena()
+
+    supermercadosArgentinos.agregarSupermercado(supermercadoCarrefour)
+    supermercadosArgentinos.agregarSupermercado(supermercadoDia)
+
+// DEFINO UNA METODOLOGÍA SIMPLE PARA UTILIZAR, POR CONSOLA, LAS FUNCIONALIDADES
+
+    val scanner = Scanner(System.`in`)
+    val mensajeOpciones = """
+    Seleccione una de las siguientes opciones:
+    1) 5 productos más vendidos de la cadena
+    2) Supermercado con mayores ingresos
+    3) Supermercados abiertos
+    4) Monto total vendido
+    5) Cantidad vendida de un producto en un supermercado
+    6) Monto vendido de un producto en un supermercado
+    7) Monto total vendido en un supermercado
+    
+    0) Finalizar
+    """
+
+    var seleccion = -1
+
+    println("Bienvenido!")
+
+    while (seleccion != 0) {
+        println(mensajeOpciones)
+        print("Ingrese la opción seleccionada: ")
+        seleccion = scanner.nextInt()
+
+        if (seleccion < 0 || seleccion > 7) {
+            println("Por favor, ingrese una opción válida")
+        } else {
+            when (seleccion) {
+                1 -> println(supermercadosArgentinos.productosMayorVentas())
+                2 -> println(supermercadosArgentinos.supermercadoMayorVentas())
+                3 -> {
+                    println("Ingrese el horario de apertura con el siguiente formato: HH:MM")
+                    val horario = scanner.next()
+                    print("Ingrese el día: ")
+                    val dia = scanner.next()
+
+                    val formato = DateTimeFormatter.ofPattern("H:mm")
+                    println(supermercadosArgentinos.supermercadosAbiertos(LocalTime.parse(horario, formato),
+                        dia.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }))
+                }
+                4 -> println("Monto total: $" + supermercadosArgentinos.montoVendidoTotal())
+                5 -> {
+                    print("Ingrese el ID del supermercado: ")
+                    val idSupermercado = scanner.nextInt()
+                    print("Ingrese el ID del producto: ")
+                    val idProducto = scanner.nextInt()
+                    println("Cantidad: " + supermercadosArgentinos.cantidadVendidaProductoSupermercado(idSupermercado, idProducto))
+                }
+                6 -> {
+                    print("Ingrese el ID del supermercado: ")
+                    val idSupermercado = scanner.nextInt()
+                    print("Ingrese el ID del producto: ")
+                    val idProducto = scanner.nextInt()
+                    println("Monto: $" + supermercadosArgentinos.montoVendidoProductoSupermercado(idSupermercado, idProducto))
+                }
+                7 -> {
+                    print("Ingrese el ID del supermercado: ")
+                    val idSupermercado = scanner.nextInt()
+                    println("Monto: $" + supermercadosArgentinos.montoVendidoSupermercado(idSupermercado))
+                }
+            }
+        }
+    }
+    scanner.close()
 }
