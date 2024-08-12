@@ -8,8 +8,8 @@ import java.util.*;
 @Clase:
     Representa un producto que se vende en un supermercado.
 @Atributos:
-    Integer id
-    String nombre
+    Integer id,
+    String nombre,
     Float precio
  */
 class Producto {
@@ -43,7 +43,7 @@ class Producto {
     Representa la asociacion entre un producto y un supermercado, conteniendo el stock de dicho
     producto en ese supermercado.
 @Atributos:
-    Producto producto
+    Producto producto,
     Integer cantidad
  */
 class StockProducto {
@@ -76,7 +76,7 @@ class StockProducto {
 @Clase:
     Representa una venta de un producto en un supermercado.
 @Atributos:
-    Integer id
+    Integer id,
     StockProducto productoVendido
  */
 class Venta {
@@ -110,12 +110,12 @@ class Venta {
 @Clase:
     Representa un supermercado de una cadena.
 @Atributos:
-    Integer id
-    String nombre
-    LocalTime horarioApertura
-    LocalTime horarioCierre
-    List<String> diasApertura
-    List<StockProducto> listaProductos
+    Integer id,
+    String nombre,
+    LocalTime horarioApertura,
+    LocalTime horarioCierre,
+    List<String> diasApertura,
+    List<StockProducto> listaProductos,
     List<Venta> historialVenta
  */
 class Supermercado {
@@ -153,15 +153,6 @@ class Supermercado {
 
     private List<Venta> historialVenta;
 
-    /*
-    @Funcion:
-        Se encarga de registrar una venta en el supermercado. En caso de no disponer del stock necesario o no encontrar
-        el producto buscado, lo indica con un mensaje y devuelve 0.
-    @Parametros:
-        Integer id, Integer cantidad
-    @TipoRetorno:
-        Float
-     */
     public Supermercado(Integer id, String nombre, List<Producto> listaProductos, Integer stockBase, LocalTime horarioApertura, LocalTime horarioCierre, List<String> diasApertura) {
         this.id = id;
         this.nombre = nombre;
@@ -183,7 +174,8 @@ class Supermercado {
         Se encarga de registrar una venta en el supermercado. En caso de no disponer del stock necesario o no encontrar
         el producto buscado, lo indica con un mensaje y devuelve 0.
     @Parametros:
-        Integer id, Integer cantidad
+        Integer id,
+        Integer cantidad
     @TipoRetorno:
         Float
      */
@@ -276,12 +268,11 @@ class Cadena {
 
     /*
     @Funcion:
-        Devuelve el valor total de ventas acumulado de todos los supermercados de la cadena. Si no existen supermercados,
-        devuelve 0.
+        Agrega un supermercado, pasado por parametro, a la cadena de supermercados.
     @Parametros:
-        Ninguno
+        Supermercado supermercado
     @TipoRetorno:
-        Float
+        Ninguno
      */
     public void agregarSupermercado(Supermercado supermercado) {
         if (this.listaSupermercados.stream().filter(superm -> Objects.equals(superm.getId(), supermercado.getId())).toList().isEmpty())
@@ -293,7 +284,7 @@ class Cadena {
     @Funcion:
         Devuelve la cantidad de ventas de un producto en un supermercado seleccionado.
     @Parametros:
-        Integer idSupermercado
+        Integer idSupermercado,
         Integer idProducto
     @TipoRetorno:
         Integer
@@ -308,7 +299,7 @@ class Cadena {
     @Funcion:
         Devuelve el monto de ingresos de un producto en un supermercado seleccionado.
     @Parametros:
-        Integer idSupermercado
+        Integer idSupermercado,
         Integer idProducto
     @TipoRetorno:
         Float
@@ -433,8 +424,6 @@ class Cadena {
     }
 }
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args){
         List<Producto> listaProductos = new ArrayList<>();

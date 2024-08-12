@@ -2,14 +2,37 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+/*
+@Clase:
+    Representa un producto que se vende en un supermercado.
+@Atributos:
+    Int id,
+    String nombre,
+    Double precio
+ */
 data class Producto(val id: Int, val nombre: String, val precio: Double)
 
+/*
+@Clase:
+    Representa la asociacion entre un producto y un supermercado, conteniendo el stock de dicho
+    producto en ese supermercado.
+@Atributos:
+    Producto producto,
+    Int cantidad
+ */
 class StockProducto(val producto: Producto, var cantidad: Int) {
     fun cantidadXCosto(): Double {
         return producto.precio * cantidad
     }
 }
 
+/*
+@Clase:
+    Representa una venta de un producto en un supermercado.
+@Atributos:
+    Int id,
+    StockProducto productoVendido
+ */
 class Venta(val id: Int, val productoVendido: StockProducto) {
     fun getTotalVenta(): Double {
         return productoVendido.cantidadXCosto()
@@ -24,6 +47,18 @@ class Venta(val id: Int, val productoVendido: StockProducto) {
     }
 }
 
+/*
+@Clase:
+    Representa un supermercado de una cadena.
+@Atributos:
+    Int id,
+    String nombre,
+    LocalTime horarioApertura,
+    LocalTime horarioCierre,
+    List<String> diasApertura,
+    List<StockProducto> listaProductos,
+    List<Venta> historialVenta
+ */
 class Supermercado(
     val id: Int,
     val nombre: String,
@@ -42,6 +77,16 @@ class Supermercado(
         }
     }
 
+    /*
+    @Funcion:
+        Se encarga de registrar una venta en el supermercado. En caso de no disponer del stock necesario o no encontrar
+        el producto buscado, lo indica con un mensaje y devuelve 0.
+    @Parametros:
+        Int id,
+        Int cantidad
+    @TipoRetorno:
+        Double
+     */
     fun registrarVenta(id: Int, cantidad: Int): Double {
         if (id < 0 || cantidad <= 0) {
             println("El id de producto debe ser 0 o mayor, y la cantidad debe mayor a 0.")
@@ -66,6 +111,14 @@ class Supermercado(
         }
     }
 
+    /*
+    @Funcion:
+        Devuelve la cantidad de unidades vendidas de un producto.
+    @Parametros:
+        Int id
+    @TipoRetorno:
+        Int
+     */
     fun cantidadVendidaProducto(id: Int): Int {
         if (id < 0) {
             println("El id de producto debe ser 0 o mayor.")
@@ -74,6 +127,14 @@ class Supermercado(
         return historialVenta.filter { it.getProductoVenta().id == id }.sumOf { it.getCantidadVendida() }
     }
 
+    /*
+    @Funcion:
+        Devuelve el valor total de ventas de un producto.
+    @Parametros:
+        Int id
+    @TipoRetorno:
+        Double
+     */
     fun montoVendidoProducto(id: Int): Double {
         if (id < 0) {
             println("El id de producto debe ser 0 o mayor.")
@@ -82,16 +143,39 @@ class Supermercado(
         return historialVenta.filter { it.getProductoVenta().id == id }.sumOf { it.getTotalVenta() }
     }
 
+    /*
+    @Funcion:
+        Devuelve el valor total de ventas acumulado del supermercado. Si no existen ventas,
+        devuelve 0.
+    @Parametros:
+        Ninguno
+    @TipoRetorno:
+        Double
+     */
     fun montoVendidoTotal(): Double {
         return historialVenta.sumOf { it.getTotalVenta() }
     }
 
-    fun getHistorialVenta(): List<Venta> = historialVenta.toList()
+    fun getHistorialVenta(): List<Venta> = historialVenta
 }
 
+/*
+@Clase:
+    Representa una cadena de supermercados.
+@Atributos:
+    List<Supermercado> listaSupermercados
+ */
 class Cadena {
     private val listaSupermercados = mutableListOf<Supermercado>()
 
+    /*
+    @Funcion:
+        Agrega un supermercado, pasado por parametro, a la cadena de supermercados.
+    @Parametros:
+        Supermercado supermercado
+    @TipoRetorno:
+        Ninguno
+     */
     fun agregarSupermercado(supermercado: Supermercado) {
         if (listaSupermercados.none { it.id == supermercado.id }) {
             listaSupermercados.add(supermercado)
@@ -100,21 +184,56 @@ class Cadena {
         }
     }
 
+    /*
+    @Funcion:
+        Devuelve la cantidad de ventas de un producto en un supermercado seleccionado.
+    @Parametros:
+        Int idSupermercado,
+        Int idProducto
+    @TipoRetorno:
+        Int
+     */
     fun cantidadVendidaProductoSupermercado(idSupermercado: Int, idProducto: Int): Int {
         val supermercado = listaSupermercados.find { it.id == idSupermercado }
         return supermercado?.cantidadVendidaProducto(idProducto) ?: 0
     }
 
+    /*
+    @Funcion:
+        Devuelve el monto de ingresos de un producto en un supermercado seleccionado.
+    @Parametros:
+        Int idSupermercado,
+        int idProducto
+    @TipoRetorno:
+        Double
+     */
     fun montoVendidoProductoSupermercado(idSupermercado: Int, idProducto: Int): Double {
         val supermercado = listaSupermercados.find { it.id == idSupermercado }
         return supermercado?.montoVendidoProducto(idProducto) ?: 0.toDouble()
     }
 
+    /*
+    @Funcion:
+        Devuelve el monto de ingresos total de un supermercado seleccionado.
+    @Parametros:
+        Int idSupermercado
+    @TipoRetorno:
+        Double
+     */
     fun montoVendidoSupermercado(idSupermercado: Int): Double {
         val supermercado = listaSupermercados.find { it.id == idSupermercado }
         return supermercado?.montoVendidoTotal() ?: 0.toDouble()
     }
 
+    /*
+    @Funcion:
+        Devuelve el valor total de ventas acumulado de todos los supermercados de la cadena. Si no existen supermercados,
+        devuelve 0.
+    @Parametros:
+        Ninguno
+    @TipoRetorno:
+        Double
+     */
     fun montoVendidoTotal(): Double {
         return if (listaSupermercados.isEmpty()) {
             println("No existe ningún supermercado en la cadena.")
@@ -124,6 +243,16 @@ class Cadena {
         }
     }
 
+    /*
+    @Funcion:
+        Devuelve un String listando los supermercados que se encuentran abiertos en el dia y horario ingresado
+        por el usuario. Si ningun supermercado se encuentra abierto, se devuelve una cadena vacia.
+    @Parametros:
+        LocalTime horario,
+        String dia
+    @TipoRetorno:
+        String
+     */
     fun supermercadosAbiertos(horario: LocalTime, dia: String): String {
         val supermercadosAbiertos = listaSupermercados.filter {
             horario.isAfter(it.horarioApertura) && horario.isBefore(it.horarioCierre) && it.diasApertura.contains(dia)
@@ -131,6 +260,15 @@ class Cadena {
         return supermercadosAbiertos.joinToString(", ") { "${it.nombre} (${it.id})" }
     }
 
+    /*
+    @Funcion:
+        Devuelve un String listando el supermercado que mayores ingresos obtuvo de toda la cadena de supermercados,
+        junto con el monto obtenido.
+    @Parametros:
+        Ninguno
+    @TipoRetorno:
+        String
+     */
     fun supermercadoMayorVentas(): String {
         return if (listaSupermercados.isEmpty()) {
             println("No existe ningún supermercado en la cadena.")
@@ -141,15 +279,29 @@ class Cadena {
         }
     }
 
+    /*
+    @Funcion:
+        Devuelve un String listando los 5 productos con mayor cantidad de ventas en toda la cadena de supermercados,
+        junto con la cantidad vendida, separados por '-'.
+        En caso de haber menos productos, muestra los disponibles
+    @Parametros:
+        Ninguno
+    @TipoRetorno:
+        String
+     */
     fun productosMayorVentas(): String {
         val listaProductos = mutableMapOf<Int, StockProducto>()
 
+        //Recorro cada supermercado
         listaSupermercados.forEach { supermercado ->
+            //Recorro cada venta del supermercado
             supermercado.getHistorialVenta().forEach { venta ->
                 val idProducto = venta.getProductoVenta().id
                 listaProductos[idProducto]?.let {
+                    //Si el producto ya existe en la lista, actualizo su cantidad
                     it.cantidad += venta.getCantidadVendida()
                 } ?: run {
+                    //Si el producto no existe, se lo agrega a la lista
                     listaProductos[idProducto] = StockProducto(venta.getProductoVenta(), venta.getCantidadVendida())
                 }
             }
@@ -182,7 +334,7 @@ fun main() {
     supermercadosArgentinos.agregarSupermercado(supermercadoCarrefour)
     supermercadosArgentinos.agregarSupermercado(supermercadoDia)
 
-// DEFINO UNA METODOLOGÍA SIMPLE PARA UTILIZAR, POR CONSOLA, LAS FUNCIONALIDADES
+    // DEFINO UNA METODOLOGÍA SIMPLE PARA UTILIZAR, POR CONSOLA, LAS FUNCIONALIDADES
 
     val scanner = Scanner(System.`in`)
     val mensajeOpciones = """
@@ -248,3 +400,9 @@ fun main() {
     }
     scanner.close()
 }
+
+/*
+    CONSIDERACIONES:
+    - DEBIDO AL ALCANCE DEL PROYECTO, SE UTILIZO UN FORMATO SIMPLIFICADO DE DOCUMENTACION. ADEMAS, SOLO
+      SE DOCUMENTARON LAS FUNCIONALIDADES SOLICITADAS, OMITIENDO OTRAS FUNCIONES BASICAS.
+ */
